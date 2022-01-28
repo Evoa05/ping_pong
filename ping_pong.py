@@ -34,7 +34,7 @@ class Player2(GameSprite):
         if keys_pressed[K_DOWN] and self.rect.y < win_height - 210:
             self.rect.y += self.speed
 
-
+   
 
 #Игровая сцена:
 win_width = 700
@@ -47,8 +47,16 @@ background = transform.scale(image.load('sky.jpg'), (win_width, win_height))
 #Персонажи игры:
 player = Player('qaz.png', 10, win_height - 280, 20, 300, 4)
 player2 = Player2('qaz.png', 670, win_height - 280, 20, 300, 4)
+ball = GameSprite('ball3.png', 300, win_height - 280, 50, 50, 1)
 
- 
+font.init()
+font = font.Font(None, 28)
+win1 = font.render('PLAYER 1 WIN!!!', True, (0, 255, 0))
+win2 = font.render('PLAYER 2 WIN!!!', True, (0, 255, 0))
+
+speed_x = 3
+speed_y = 3
+
 finish = False
 
 game = True
@@ -60,8 +68,7 @@ time.delay(50)
 #mixer.music.load()
 #mixer.music.play()
 
-font.init()
-font2 = font.SysFont('Arial', 28)
+
 
 
 while game:
@@ -70,10 +77,32 @@ while game:
             game = False
     if finish != True:
         window.blit(background,(0, 0))
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+
+        if sprite.collide_rect(player, ball) or sprite.collide_rect(player2, ball):
+            speed_x *= -1
+
+        if ball.rect.y > win_height - 50 or ball.rect.y < 0:
+            speed_y *= -1
+
+        if ball.rect.x < 0:
+            finish = True
+            window.blit(win2, (200, 200))
+            game_over = True
+
+        if ball.rect.x > win_width:
+            finish = True
+            window.blit(win1, (200, 200))
+            game_over = True
+
         player.update()
         player.reset()
         player2.update()
         player2.reset()
+        ball.update()
+        ball.reset()
+
    
     display.update()
     
